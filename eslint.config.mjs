@@ -6,7 +6,7 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default defineConfig([
   {
-    ignores: ['eslint.config.mjs', 'dist', '**/dist/**', '**/node_modules/**'],
+    ignores: ['eslint.config.mjs', 'dist', '**/dist/**', '**/node_modules/**', 'prisma.config.ts'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
