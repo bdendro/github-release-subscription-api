@@ -1,14 +1,31 @@
 import { Response } from 'express';
-import type { ParamsDictionary } from 'express-serve-static-core';
-import { ValidatedRequest } from '../../common/types/validated-request';
+import {
+  RequestWithValidatedBody,
+  RequestWithValidatedParams,
+  RequestWithValidatedQuery,
+} from '../../common/types/validated-request';
 import { SubscribeBody, SubscriptionsQuery, TokenParams } from '../schemas/subscription.schema';
+import { ResponseMessage } from '../../common/types/response';
+import { SubscriptionResponseDTO } from '../dto/subscription.response.dto';
 
 export interface SubscriptionControllerInterface {
-  subscribe(req: ValidatedRequest<SubscribeBody>, res: Response): Promise<void>;
-  confirm(req: ValidatedRequest<unknown, TokenParams>, res: Response): Promise<void>;
-  unsubscribe(req: ValidatedRequest<unknown, TokenParams>, res: Response): Promise<void>;
+  subscribe(
+    req: RequestWithValidatedBody<SubscribeBody>,
+    res: Response<ResponseMessage>,
+  ): Promise<void>;
+
+  confirm(
+    req: RequestWithValidatedParams<TokenParams>,
+    res: Response<ResponseMessage>,
+  ): Promise<void>;
+
+  unsubscribe(
+    req: RequestWithValidatedParams<TokenParams>,
+    res: Response<ResponseMessage>,
+  ): Promise<void>;
+
   getSubscriptionsByEmail(
-    req: ValidatedRequest<unknown, ParamsDictionary, SubscriptionsQuery>,
-    res: Response,
+    req: RequestWithValidatedQuery<SubscriptionsQuery>,
+    res: Response<SubscriptionResponseDTO[]>,
   ): Promise<void>;
 }

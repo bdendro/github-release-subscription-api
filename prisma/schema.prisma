@@ -12,10 +12,11 @@ model Subscription {
   email       String
   repo        String
   token       String   @unique
-  isConfirmed Boolean  @default(false)
-  lastSeenTag String?
-  createdAt   DateTime @default(now())
+  confirmed   Boolean  @default(false)
+  lastSeenTag String?  @map("last_seen_tag")
+  createdAt   DateTime @default(now()) @map("created_at")
 
   @@unique([email, repo])
   @@index([email])
+  @@map("subscriptions")
 }

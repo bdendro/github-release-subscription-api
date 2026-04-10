@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { ZodType } from 'zod';
-import { ValidationError, ValidationErrorDetail } from '../utils/errors/customErrors';
+import { ValidationError, ValidationErrorDetail } from '../utils/errors/custom-errors';
 import { ValidatedRequest } from '../types/validated-request';
 
 const requestParts = ['body', 'params', 'query'] as const;

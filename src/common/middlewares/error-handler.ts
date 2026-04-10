@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ExternalServiceError, HttpError, ValidationError } from '../utils/errors/customErrors';
+import { ExternalServiceError, HttpError, ValidationError } from '../utils/errors/custom-errors';
 
 export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof HttpError) {

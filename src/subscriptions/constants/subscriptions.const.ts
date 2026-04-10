@@ -1,3 +1,5 @@
+export const SUBSCRIPTION_NAME = 'Subscription';
+
 export const SUBSCRIPTION_ROUTE_PATHS = {
   SUBSCRIBE: 'subscribe',
   CONFIRM: 'confirm',
