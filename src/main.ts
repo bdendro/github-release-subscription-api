@@ -1,17 +1,17 @@
+import { env } from './config/env';
 import { createApp } from './app';
 import { createContainer } from './container';
 
 async function bootstrap() {
-  const container = createContainer();
+  const container = createContainer(env);
 
   await container.prisma.$connect();
   console.log('Prisma connection established successfully');
 
   const app = createApp(container);
 
-  // TODO: add env constant
-  const server = app.listen(process.env.APP_PORT, () => {
-    console.log(`Express server is listening on port ${process.env.APP_PORT}`);
+  const server = app.listen(env.APP_PORT, () => {
+    console.log(`Express server is listening on port ${env.APP_PORT}`);
   });
 
   async function shutdown() {
