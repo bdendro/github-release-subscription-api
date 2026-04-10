@@ -6,4 +6,4 @@ export const SUBSCRIPTION_ROUTE_PATHS = {
 
   // params names
   TOKEN: 'token',
-};
+} as const;

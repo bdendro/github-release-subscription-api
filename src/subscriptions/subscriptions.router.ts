@@ -1,19 +1,57 @@
 import { Router } from 'express';
 import { SUBSCRIPTION_ROUTE_PATHS } from './constants/subscriptions.const';
+import { SubscriptionControllerInterface } from './interfaces/subscription.controller.interface';
+import { validateRequest } from '../common/middlewares/validate-request';
+import {
+  SubscribeBody,
+  subscribeBodySchema,
+  SubscriptionsQuery,
+  subscriptionsQuerySchema,
+  TokenParams,
+  tokenParamsSchema,
+} from './schemas/subscription.schema';
+import { ValidatedRequest } from '../common/types/validated-request';
+import type { ParamsDictionary } from 'express-serve-static-core';
 
-export function createSubscriptionRouter(subscriptionController): Router {
+export function createSubscriptionRouter(
+  subscriptionController: SubscriptionControllerInterface,
+): Router {
   const router = Router();
 
-  router.use(`/${SUBSCRIPTION_ROUTE_PATHS.SUBSCRIBE}`, () => {});
-
-  router.use(`/${SUBSCRIPTION_ROUTE_PATHS.CONFIRM}/:${SUBSCRIPTION_ROUTE_PATHS.TOKEN}`, () => {});
-
-  router.use(
-    `/${SUBSCRIPTION_ROUTE_PATHS.UNSUBSCRIBE}/:${SUBSCRIPTION_ROUTE_PATHS.TOKEN}`,
-    () => {},
+  router.post(
+    `/${SUBSCRIPTION_ROUTE_PATHS.SUBSCRIBE}`,
+    validateRequest({ body: subscribeBodySchema }),
+    async (req, res) => {
+      await subscriptionController.subscribe(req as ValidatedRequest<SubscribeBody>, res);
+    },
   );
 
-  router.use(`/${SUBSCRIPTION_ROUTE_PATHS.SUBSCRIPTIONS}`, () => {});
+  router.get(
+    `/${SUBSCRIPTION_ROUTE_PATHS.CONFIRM}/:${SUBSCRIPTION_ROUTE_PATHS.TOKEN}`,
+    validateRequest({ params: tokenParamsSchema }),
+    async (req, res) => {
+      await subscriptionController.confirm(req as ValidatedRequest<unknown, TokenParams>, res);
+    },
+  );
+
+  router.get(
+    `/${SUBSCRIPTION_ROUTE_PATHS.UNSUBSCRIBE}/:${SUBSCRIPTION_ROUTE_PATHS.TOKEN}`,
+    validateRequest({ params: tokenParamsSchema }),
+    async (req, res) => {
+      await subscriptionController.unsubscribe(req as ValidatedRequest<unknown, TokenParams>, res);
+    },
+  );
+
+  router.get(
+    `/${SUBSCRIPTION_ROUTE_PATHS.SUBSCRIPTIONS}`,
+    validateRequest({ query: subscriptionsQuerySchema }),
+    async (req, res) => {
+      await subscriptionController.getSubscriptionsByEmail(
+        req as ValidatedRequest<unknown, ParamsDictionary, SubscriptionsQuery>,
+        res,
+      );
+    },
+  );
 
   return router;
 }

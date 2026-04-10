@@ -1,6 +1,7 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
 import { AppContainer } from './container';
 import { createRouter } from './routes';
+import { errorHandler } from './common/middlewares/error-handler';
 
 export function createApp(container: AppContainer): Application {
   const app = express();
@@ -8,11 +9,13 @@ export function createApp(container: AppContainer): Application {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  app.use('/api', createRouter());
+  app.use('/api', createRouter(container.controllers));
 
   app.use((_req: Request, res: Response, _next: NextFunction) => {
     res.status(404).json({ message: 'Not Found' });
   });
+
+  app.use(errorHandler);
 
   return app;
 }
