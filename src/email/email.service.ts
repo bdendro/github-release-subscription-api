@@ -8,7 +8,7 @@ import { getRepoUpdateTemplate } from './templates/repo-update.template';
 import { getUnsubscribeSuccessTemplate } from './templates/unsubscribed.template';
 
 export class EmailService implements EmailServiceInterface {
-  constructor(private emailProvider: EmailProviderInterface) {}
+  constructor(private readonly emailProvider: EmailProviderInterface) {}
 
   async sendConfirmationEmail(to: string, token: string): Promise<void> {
     const confirmationUrl = `${EMAIL.CONFIRMATION_BASE_URL}/${token}`;
@@ -16,24 +16,24 @@ export class EmailService implements EmailServiceInterface {
     await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_CONFIRMATION, html });
   }
 
-  async sendConfirmedMail(to: string, token: string): Promise<void> {
+  async sendConfirmationSuccessEmail(to: string, token: string): Promise<void> {
     const unsubscribeUrl = `${EMAIL.UNSUBSCRIBE_BASE_URL}/${token}`;
     const html = getConfirmationSuccessTemplate(unsubscribeUrl);
     await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_CONFIRMED, html });
   }
 
-  async sendUnsubscribeMail(to: string): Promise<void> {
+  async sendUnsubscribeSuccessEmail(to: string): Promise<void> {
     const html = getUnsubscribeSuccessTemplate();
     await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_CANCELED, html });
   }
 
-  async sendGitHubReleaseMail(
+  async sendGitHubReleaseEmail(
     to: string,
     repo: GithubResponseInterface,
     token: string,
   ): Promise<void> {
     const unsubscribeUrl = `${EMAIL.UNSUBSCRIBE_BASE_URL}/${token}`;
     const html = getRepoUpdateTemplate(repo, unsubscribeUrl);
-    await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_WEATHER, html });
+    await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_REPO, html });
   }
 }

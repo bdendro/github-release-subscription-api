@@ -1,4 +1,4 @@
-import { ConflictError, NotFoundError } from '../common/utils/errors/custom-errors';
+import { ConflictError } from '../common/utils/errors/custom-errors';
 import { Prisma, PrismaClient, Subscription } from '../generated/prisma/client';
 
 import { SubscriptionUpdateInput } from '../generated/prisma/models';
@@ -18,10 +18,8 @@ export class SubscriptionRepository implements SubscriptionRepositoryInterface {
     return await this.prisma.subscription.findMany({ where: { email } });
   }
 
-  async getSubscriptionByToken(token: string): Promise<Subscription> {
-    const subscription = await this.prisma.subscription.findUnique({ where: { token } });
-    if (!subscription) throw new NotFoundError(SUBSCRIPTION_ERROR_MESSAGES.NOT_FOUND);
-    return subscription;
+  async getSubscriptionByToken(token: string): Promise<Subscription | null> {
+    return await this.prisma.subscription.findUnique({ where: { token } });
   }
 
   async create(subscriptionBody: SubscribeBody, token: string): Promise<Subscription> {
@@ -39,7 +37,10 @@ export class SubscriptionRepository implements SubscriptionRepositoryInterface {
     }
   }
 
-  async updateByToken(token: string, update: SubscriptionUpdateInput): Promise<Subscription> {
+  async updateByToken(
+    token: string,
+    update: SubscriptionUpdateInput,
+  ): Promise<Subscription | null> {
     try {
       if ('token' in update && typeof update.token === 'string') {
         const subscription = await this.prisma.subscription.findUnique({
@@ -51,7 +52,7 @@ export class SubscriptionRepository implements SubscriptionRepositoryInterface {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PRISMA_ERROR_CODES.RECORD_NOT_FOUND) {
-          throw new NotFoundError(SUBSCRIPTION_ERROR_MESSAGES.NOT_FOUND);
+          return null;
         }
 
         if (err.code === PRISMA_ERROR_CODES.UNIQUE_CONSTRAINT) {
@@ -62,13 +63,12 @@ export class SubscriptionRepository implements SubscriptionRepositoryInterface {
     }
   }
 
-  async deleteByToken(token: string): Promise<void> {
+  async deleteByToken(token: string): Promise<Subscription | null> {
     try {
-      await this.prisma.subscription.delete({ where: { token } });
-      return;
+      return await this.prisma.subscription.delete({ where: { token } });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
-        throw new NotFoundError(SUBSCRIPTION_ERROR_MESSAGES.NOT_FOUND);
+        return null;
       }
       throw err;
     }

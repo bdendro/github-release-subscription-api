@@ -1,12 +1,27 @@
 import { env } from './config/env';
 import { createApp } from './app';
 import { createContainer } from './container';
+import { EMAIL_VERIFICATION_ERROR_KIND } from './email/constants/email-provider';
 
 async function bootstrap() {
   const container = createContainer(env);
 
   await container.prisma.$connect();
   console.log('Prisma connection established successfully');
+
+  const emailVerification = await container.emailProvider.verifyTransporter();
+  if (!emailVerification.ok) {
+    if (emailVerification.kind !== EMAIL_VERIFICATION_ERROR_KIND.CONNECTION)
+      throw new Error('SMTP authentication failed. Check email credentials.', {
+        cause: emailVerification.error,
+      });
+    console.warn(
+      `SMTP is currently unavailable [${emailVerification.kind}]. Server will start without verified email connectivity.`,
+      emailVerification.error,
+    );
+  } else {
+    console.log('SMTP connection successful. Email transporter is ready.');
+  }
 
   const app = createApp(container);
 
@@ -19,6 +34,7 @@ async function bootstrap() {
     server.close();
 
     await container.prisma.$disconnect();
+    container.emailProvider.closeConnection();
 
     console.log('Application shut down successfully.');
     process.exit(0);
