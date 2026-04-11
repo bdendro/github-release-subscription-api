@@ -65,3 +65,9 @@ export class GithubRateLimitError extends ExternalServiceError {
     super('GitHub', cause, message);
   }
 }
+
+export class EmailServiceError extends ExternalServiceError {
+  constructor(cause?: Error, message?: string) {
+    super('Email', cause, message);
+  }
+}
