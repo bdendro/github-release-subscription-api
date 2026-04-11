@@ -6,18 +6,27 @@ import { SubscribeBody } from './schemas/subscription.schema';
 import { NotFoundError } from '../common/utils/errors/custom-errors';
 import { SUBSCRIPTION_ERROR_MESSAGES } from './constants/error-messages';
 import { EmailServiceInterface } from '../email/interfaces/email.service.interface';
+import { GithubServiceInterface } from '../github/interfaces/github.service.interface';
+import { GITHUB_ERROR_MESSAGES } from '../github/constants/error-messages';
 
 export class SubscriptionService implements SubscriptionServiceInterface {
   constructor(
     private readonly subscriptionRepository: SubscriptionRepositoryInterface,
     private readonly emailService: EmailServiceInterface,
+    private readonly githubService: GithubServiceInterface,
   ) {}
 
   async subscribe(subscribeBody: SubscribeBody): Promise<void> {
-    // const repo = 'repo' // todo: add github client
+    const isRepoExists = await this.githubService.isRepositoryExists(subscribeBody.repo);
+    if (!isRepoExists) throw new NotFoundError(GITHUB_ERROR_MESSAGES.REPO_NOT_FOUND);
+
+    const release = await this.githubService.getLastRelease(subscribeBody.repo);
 
     const token = randomUUID();
-    await this.subscriptionRepository.create(subscribeBody, token);
+    await this.subscriptionRepository.create(
+      { ...subscribeBody, lastSeenTag: release?.lastSeenTag || null },
+      token,
+    );
 
     await this.emailService.sendConfirmationEmail(subscribeBody.email, token);
   }

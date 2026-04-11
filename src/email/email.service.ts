@@ -1,4 +1,4 @@
-import { GithubResponseInterface } from '../github/dto/github.response.dto';
+import { GithubReleaseResponseInterface } from '../github/dto/github.response.dto';
 import { EMAIL } from './constants/email.const';
 import { EmailProviderInterface } from './interfaces/email.provider.interface';
 import { EmailServiceInterface } from './interfaces/email.service.interface';
@@ -29,11 +29,11 @@ export class EmailService implements EmailServiceInterface {
 
   async sendGitHubReleaseEmail(
     to: string,
-    repo: GithubResponseInterface,
+    release: GithubReleaseResponseInterface,
     token: string,
   ): Promise<void> {
     const unsubscribeUrl = `${EMAIL.UNSUBSCRIBE_BASE_URL}/${token}`;
-    const html = getRepoUpdateTemplate(repo, unsubscribeUrl);
+    const html = getRepoUpdateTemplate(release, unsubscribeUrl);
     await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_REPO, html });
   }
 }

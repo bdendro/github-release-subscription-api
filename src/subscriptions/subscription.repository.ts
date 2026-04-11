@@ -1,11 +1,12 @@
 import { ConflictError } from '../common/utils/errors/custom-errors';
 import { Prisma, PrismaClient, Subscription } from '../generated/prisma/client';
-
 import { SubscriptionUpdateInput } from '../generated/prisma/models';
 import { SUBSCRIPTION_ERROR_MESSAGES } from './constants/error-messages';
-import { PRISMA_ERROR_CODES } from './constants/prisma-error-codes';
-import { SubscriptionRepositoryInterface } from './interfaces/subscription.repository.interface';
-import { SubscribeBody } from './schemas/subscription.schema';
+import { PRISMA_ERROR_CODES } from '../common/constants/prisma-error-codes';
+import {
+  SubscribeReq,
+  SubscriptionRepositoryInterface,
+} from './interfaces/subscription.repository.interface';
 
 export class SubscriptionRepository implements SubscriptionRepositoryInterface {
   constructor(private readonly prisma: PrismaClient) {}
@@ -22,10 +23,10 @@ export class SubscriptionRepository implements SubscriptionRepositoryInterface {
     return await this.prisma.subscription.findUnique({ where: { token } });
   }
 
-  async create(subscriptionBody: SubscribeBody, token: string): Promise<Subscription> {
+  async create(subscribeReq: SubscribeReq, token: string): Promise<Subscription> {
     try {
       return await this.prisma.subscription.create({
-        data: { ...subscriptionBody, token },
+        data: { ...subscribeReq, token },
       });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {

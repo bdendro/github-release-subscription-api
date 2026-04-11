@@ -7,7 +7,7 @@ export class HttpError extends Error {
   constructor(
     message: string,
     public readonly statusCode: number,
-    cause?: Error,
+    cause?: unknown,
   ) {
     super(message, { cause });
     this.name = this.constructor.name;
@@ -15,7 +15,7 @@ export class HttpError extends Error {
 }
 
 export class BadRequestError extends HttpError {
-  constructor(message: string = 'Bad Request', cause?: Error) {
+  constructor(message: string = 'Bad Request', cause?: unknown) {
     super(message, 400, cause);
   }
 }
@@ -27,25 +27,25 @@ export class ValidationError extends BadRequestError {
 }
 
 export class NotFoundError extends HttpError {
-  constructor(message: string, cause?: Error) {
+  constructor(message: string, cause?: unknown) {
     super(message, 404, cause);
   }
 }
 
 export class ConflictError extends HttpError {
-  constructor(message: string, cause?: Error) {
+  constructor(message: string, cause?: unknown) {
     super(message, 409, cause);
   }
 }
 
 export class TooManyRequestsError extends HttpError {
-  constructor(message: string = 'Too many requests. Try later', cause?: Error) {
+  constructor(message: string = 'Too many requests. Try later', cause?: unknown) {
     super(message, 429, cause);
   }
 }
 
 export class InternalServerError extends HttpError {
-  constructor(message: string = 'Internal Server Error', cause?: Error) {
+  constructor(message: string = 'Internal Server Error', cause?: unknown) {
     super(message, 500, cause);
   }
 }
@@ -53,21 +53,21 @@ export class InternalServerError extends HttpError {
 export class ExternalServiceError extends HttpError {
   constructor(
     public readonly serviceName: string,
-    cause?: Error,
+    cause?: unknown,
     message: string = 'External service temporarily unavailable',
   ) {
     super(message, 503, cause);
   }
 }
 
-export class GithubRateLimitError extends ExternalServiceError {
-  constructor(cause?: Error, message?: string) {
+export class GithubError extends ExternalServiceError {
+  constructor(cause?: unknown, message?: string) {
     super('GitHub', cause, message);
   }
 }
 
 export class EmailServiceError extends ExternalServiceError {
-  constructor(cause?: Error, message?: string) {
+  constructor(cause?: unknown, message?: string) {
     super('Email', cause, message);
   }
 }

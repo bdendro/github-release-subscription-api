@@ -19,6 +19,9 @@ const envSchema = z.object({
     falsy: ['false'],
     error: 'EMAIL_SECURE must be "true" or "false"',
   }),
+
+  GITHUB_TOKEN: z.string().min(1),
+  GITHUB_API_URL: z.url({ protocol: /^https?$/ }),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

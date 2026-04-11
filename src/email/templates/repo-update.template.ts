@@ -1,6 +1,9 @@
-import { GithubResponseInterface } from '../../github/dto/github.response.dto';
+import { GithubReleaseResponseInterface } from '../../github/dto/github.response.dto';
 
-export function getRepoUpdateTemplate(repo: GithubResponseInterface, unsubscribeUrl: string) {
+export function getRepoUpdateTemplate(
+  repo: GithubReleaseResponseInterface,
+  unsubscribeUrl: string,
+) {
   return `
     <html>
       <body>
