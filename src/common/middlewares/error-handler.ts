@@ -15,9 +15,11 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     }
 
     if (err instanceof ValidationError) {
-      return res.status(err.statusCode).json({ message: err.message, details: err.details });
+      res.status(err.statusCode).json({ message: err.message, details: err.details });
+      return;
     }
-    return res.status(err.statusCode).json({ message: err.message });
+    res.status(err.statusCode).json({ message: err.message });
+    return;
   }
 
   if (
@@ -28,7 +30,8 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     err.status === 400 &&
     'body' in err
   ) {
-    return res.status(400).json({ message: 'Invalid body' });
+    res.status(400).json({ message: 'Invalid body' });
+    return;
   }
 
   let message: string;
