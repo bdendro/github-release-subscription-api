@@ -38,4 +38,4 @@ FROM deps AS test
 
 COPY . .
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run test:unit"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run test"]
