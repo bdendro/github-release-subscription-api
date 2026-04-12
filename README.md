@@ -22,6 +22,7 @@ The application validates repositories through the GitHub API, stores subscripti
 - Unit tests for business logic
 - Docker and Docker Compose support
 - CI pipeline for format check, lint, build, and tests
+- Interactive Swagger UI documentation for API exploration and testing
 
 > **Note**
 > Logging is currently based on `console.log` / `console.error`. A structured logger has not been added yet.
@@ -30,18 +31,38 @@ The application validates repositories through the GitHub API, stores subscripti
 
 ## Tech Stack
 
-- **Node.js 24**
-- **TypeScript**
-- **Express**
-- **PostgreSQL**
-- **Prisma**
-- **Axios**
-- **Zod**
-- **Nodemailer**
-- **node-cron**
-- **Jest**
-- **ESLint + Prettier**
-- **Docker**
+- Node.js
+- TypeScript
+- Express
+- PostgreSQL
+- Prisma
+- Axios
+- Zod
+- Nodemailer
+- node-cron
+- Jest
+- ESLint + Prettier
+- Docker
+
+---
+
+## API Documentation
+
+Interactive API documentation is available through Swagger UI.
+
+After starting the application, open:
+
+```text
+http://localhost:3000/api-docs
+```
+
+The Swagger UI allows you to:
+
+- inspect all available endpoints
+- view request and response schemas
+- test the API directly from the browser using Try it out
+
+The API contract is defined in `swagger.json`
 
 ---
 

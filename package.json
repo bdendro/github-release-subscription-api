@@ -1,6 +1,6 @@
 {
   "name": "github-release-subscription-api",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
   "license": "UNLICENSED",
   "author": "",
@@ -32,6 +32,7 @@
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.5",
     "pg": "^8.20.0",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -43,6 +44,7 @@
     "@types/node": "^25.5.2",
     "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "cross-env": "^10.1.0",
     "eslint": "^10.2.0",
     "eslint-config-prettier": "^10.1.8",
