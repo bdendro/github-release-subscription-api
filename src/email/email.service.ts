@@ -10,20 +10,20 @@ import { getUnsubscribeSuccessTemplate } from './templates/unsubscribed.template
 export class EmailService implements EmailServiceInterface {
   constructor(private readonly emailProvider: EmailProviderInterface) {}
 
-  async sendConfirmationEmail(to: string, token: string): Promise<void> {
+  async sendConfirmationEmail(to: string, token: string, repo: string): Promise<void> {
     const confirmationUrl = `${EMAIL.CONFIRMATION_BASE_URL}/${token}`;
-    const html = getConfirmEmailTemplate(confirmationUrl);
+    const html = getConfirmEmailTemplate(confirmationUrl, repo);
     await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_CONFIRMATION, html });
   }
 
-  async sendConfirmationSuccessEmail(to: string, token: string): Promise<void> {
+  async sendConfirmationSuccessEmail(to: string, token: string, repo: string): Promise<void> {
     const unsubscribeUrl = `${EMAIL.UNSUBSCRIBE_BASE_URL}/${token}`;
-    const html = getConfirmationSuccessTemplate(unsubscribeUrl);
+    const html = getConfirmationSuccessTemplate(unsubscribeUrl, repo);
     await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_CONFIRMED, html });
   }
 
-  async sendUnsubscribeSuccessEmail(to: string): Promise<void> {
-    const html = getUnsubscribeSuccessTemplate();
+  async sendUnsubscribeSuccessEmail(to: string, repo: string): Promise<void> {
+    const html = getUnsubscribeSuccessTemplate(repo);
     await this.emailProvider.send({ to, subject: EMAIL.SUBJECT_CANCELED, html });
   }
 

@@ -2,9 +2,12 @@ import express, { Application, NextFunction, Request, Response } from 'express';
 import { AppContainer } from './container';
 import { createRouter } from './routes';
 import { errorHandler } from './common/middlewares/error-handler';
+import helmet from 'helmet';
 
 export function createApp(container: AppContainer): Application {
   const app = express();
+
+  app.use(helmet());
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));

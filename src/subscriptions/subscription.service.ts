@@ -54,7 +54,7 @@ export class SubscriptionService implements SubscriptionServiceInterface {
       token,
     );
 
-    await this.emailService.sendConfirmationEmail(subscribeBody.email, token);
+    await this.emailService.sendConfirmationEmail(subscribeBody.email, token, subscribeBody.repo);
   }
 
   async confirm(token: string): Promise<void> {
@@ -63,7 +63,11 @@ export class SubscriptionService implements SubscriptionServiceInterface {
     });
     if (!subscription) throw new NotFoundError(SUBSCRIPTION_ERROR_MESSAGES.NOT_FOUND);
 
-    await this.emailService.sendConfirmationSuccessEmail(subscription.email, token);
+    await this.emailService.sendConfirmationSuccessEmail(
+      subscription.email,
+      token,
+      subscription.repo,
+    );
 
     return;
   }
@@ -72,7 +76,7 @@ export class SubscriptionService implements SubscriptionServiceInterface {
     const subscription = await this.subscriptionRepository.deleteByToken(token);
     if (!subscription) throw new NotFoundError(SUBSCRIPTION_ERROR_MESSAGES.NOT_FOUND);
 
-    await this.emailService.sendUnsubscribeSuccessEmail(subscription.email);
+    await this.emailService.sendUnsubscribeSuccessEmail(subscription.email, subscription.repo);
 
     return;
   }
