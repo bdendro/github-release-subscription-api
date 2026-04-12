@@ -1,6 +1,10 @@
+import dotenv from 'dotenv';
 import { z } from 'zod';
-import { ENV } from '../common/constants/env';
+import { ENV, ENV_FILES } from '../common/constants/env';
 import ms from 'ms';
+
+const ENV_FILE_PATH = process.env.NODE_ENV === ENV.TEST ? ENV_FILES.TEST : ENV_FILES.ENV;
+dotenv.config({ path: ENV_FILE_PATH });
 
 const envSchema = z.object({
   NODE_ENV: z.enum([ENV.DEVELOPMENT, ENV.TEST, ENV.PRODUCTION]).default(ENV.DEVELOPMENT),
