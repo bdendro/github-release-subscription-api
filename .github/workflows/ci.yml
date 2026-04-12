@@ -2,9 +2,9 @@ name: Continuous Integration Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   check-and-build:
@@ -16,26 +16,26 @@ jobs:
         node-version: [20.x, 22.x]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Check code formatting
-      run: npm run format:diff
-      
-    - name: Lint
-      run: npm run lint:check
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Build project
-      run: npm run build
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check code formatting
+        run: npm run format:diff
+
+      - name: Lint
+        run: npm run lint:check
+
+      - name: Build project
+        run: npm run build
 
   tests:
     name: Tests
@@ -76,8 +76,8 @@ jobs:
       EMAIL_PORT: ${{ vars.EMAIL_PORT }}
       EMAIL_SECURE: ${{ vars.EMAIL_SECURE }}
 
-      GITHUB_API_URL: ${{ vars.GITHUB_API_URL }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_API_URL: ${{ vars.GH_API_URL }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -94,7 +94,7 @@ jobs:
 
       - name: Generate prisma client
         run: npm run generate:prisma
-        
+
       - name: Run database migrations
         run: npm run migrate:prod
 
