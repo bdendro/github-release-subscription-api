@@ -47,7 +47,8 @@ const envSchema = z.object({
     .refine(
       (value) => typeof ms(value as ms.StringValue) === 'number',
       'UNCONFIRMED_EXPIRATION_TIME must be a valid duration (like 10m, 1h, 2d)',
-    ),
+    )
+    .default('5m'),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
