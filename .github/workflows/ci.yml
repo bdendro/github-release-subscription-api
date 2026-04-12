@@ -73,7 +73,7 @@ jobs:
 
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/github_release_subscription_test
 
-      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL: ${{ secrets.EMAIL_USER }}
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
       EMAIL_HOST: ${{ vars.EMAIL_HOST }}
       EMAIL_PORT: ${{ vars.EMAIL_PORT }}
