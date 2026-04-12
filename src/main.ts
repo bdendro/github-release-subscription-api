@@ -2,6 +2,7 @@ import { env } from './config/env';
 import { createApp } from './app';
 import { createContainer } from './container';
 import { EMAIL_VERIFICATION_ERROR_KIND } from './email/constants/email-provider';
+import { JobsManager } from './jobs/manager';
 
 async function bootstrap() {
   const container = createContainer(env);
@@ -25,6 +26,13 @@ async function bootstrap() {
 
   const app = createApp(container);
 
+  const jobsManager = new JobsManager(
+    container.githubRepositoryReleaseJob,
+    container.services.subscriptionService,
+  );
+
+  jobsManager.startJobs();
+
   const server = app.listen(env.APP_PORT, () => {
     console.log(`Express server is listening on port ${env.APP_PORT}`);
   });
@@ -35,6 +43,7 @@ async function bootstrap() {
 
     await container.prisma.$disconnect();
     container.emailProvider.closeConnection();
+    await jobsManager.stopJobs();
 
     console.log('Application shut down successfully.');
     process.exit(0);

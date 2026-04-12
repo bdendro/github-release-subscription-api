@@ -74,4 +74,19 @@ export class SubscriptionRepository implements SubscriptionRepositoryInterface {
       throw err;
     }
   }
+
+  async deleteUnconfirmed(expirationTimeInMs: number): Promise<number> {
+    const expirationDate = new Date(Date.now() - expirationTimeInMs);
+
+    const result = await this.prisma.subscription.deleteMany({
+      where: {
+        confirmed: false,
+        createdAt: {
+          lte: expirationDate,
+        },
+      },
+    });
+
+    return result.count;
+  }
 }

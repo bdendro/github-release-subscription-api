@@ -8,6 +8,8 @@ import { SUBSCRIPTION_ERROR_MESSAGES } from './constants/error-messages';
 import { EmailServiceInterface } from '../email/interfaces/email.service.interface';
 import { GithubServiceInterface } from '../github/interfaces/github.service.interface';
 import { GITHUB_ERROR_MESSAGES } from '../github/constants/error-messages';
+import { Subscription } from '../generated/prisma/client';
+import ms from 'ms';
 
 export class SubscriptionService implements SubscriptionServiceInterface {
   constructor(
@@ -15,6 +17,30 @@ export class SubscriptionService implements SubscriptionServiceInterface {
     private readonly emailService: EmailServiceInterface,
     private readonly githubService: GithubServiceInterface,
   ) {}
+
+  async getAll(): Promise<Subscription[]> {
+    return await this.subscriptionRepository.getAll();
+  }
+
+  async deleteUnconfirmed(expirationTime: string): Promise<number> {
+    const expirationTimeInMs = ms(expirationTime as ms.StringValue);
+    return await this.subscriptionRepository.deleteUnconfirmed(expirationTimeInMs);
+  }
+
+  async updateLastSeenTagByToken(
+    token: string,
+    lastSeenTag: string,
+  ): Promise<SubscriptionResponseDTO> {
+    const subscription = await this.subscriptionRepository.updateByToken(token, { lastSeenTag });
+    if (!subscription) throw new NotFoundError(SUBSCRIPTION_ERROR_MESSAGES.NOT_FOUND);
+
+    return {
+      email: subscription.email,
+      repo: subscription.repo,
+      confirmed: subscription.confirmed,
+      last_seen_tag: subscription.lastSeenTag,
+    };
+  }
 
   async subscribe(subscribeBody: SubscribeBody): Promise<void> {
     const isRepoExists = await this.githubService.isRepositoryExists(subscribeBody.repo);

@@ -13,4 +13,5 @@ export interface SubscriptionRepositoryInterface {
     update: Prisma.SubscriptionUpdateInput,
   ): Promise<Subscription | null>;
   deleteByToken(token: string): Promise<Subscription | null>;
+  deleteUnconfirmed(expirationTimeInMs: number): Promise<number>;
 }

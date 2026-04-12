@@ -7,6 +7,7 @@ import { GithubClient } from './github/github.client';
 import { GithubService } from './github/github.service';
 import { GithubClientInterface } from './github/interfaces/github.client.interface';
 import { GithubRateLimiter } from './github/utils/github-rate-limiter';
+import { GithubRepositoryReleaseJob } from './jobs/github-repo-release.job';
 import { SubscriptionController } from './subscriptions/subscription.controller';
 import { SubscriptionRepository } from './subscriptions/subscription.repository';
 import { SubscriptionService } from './subscriptions/subscription.service';
@@ -35,10 +36,18 @@ export function createContainer(env: Env, overrides?: ContainerOverrides) {
   );
   const subscriptionController = new SubscriptionController(subscriptionService);
 
+  const githubRepositoryReleaseJob = new GithubRepositoryReleaseJob(
+    githubService,
+    subscriptionService,
+    emailService,
+    githubRateLimiter,
+  );
+
   return {
     prisma,
     emailProvider,
     githubRateLimiter,
+    githubRepositoryReleaseJob,
     controllers: { subscriptionController },
     services: { subscriptionService, emailService, githubService },
   };

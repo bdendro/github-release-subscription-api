@@ -1,12 +1,25 @@
 import { z } from 'zod';
 import { ENV } from '../common/constants/env';
+import ms from 'ms';
 
 const envSchema = z.object({
   NODE_ENV: z.enum([ENV.DEVELOPMENT, ENV.TEST, ENV.PRODUCTION]).default(ENV.DEVELOPMENT),
 
-  APP_NAME: z.string().min(1),
+  APP_NAME: z.string().trim().min(1),
   APP_PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   APP_BASE_URL: z.url({ protocol: /^https?$/ }),
+  APP_TIMEZONE: z
+    .string()
+    .trim()
+    .min(1)
+    .refine((value) => {
+      try {
+        new Intl.DateTimeFormat('en-US', { timeZone: value });
+        return true;
+      } catch {
+        return false;
+      }
+    }, 'APP_TIMEZONE must be a valid IANA timezone'),
 
   DATABASE_URL: z.url({ normalize: true }).min(1),
 
@@ -20,8 +33,17 @@ const envSchema = z.object({
     error: 'EMAIL_SECURE must be "true" or "false"',
   }),
 
-  GITHUB_TOKEN: z.string().min(1),
+  GITHUB_TOKEN: z.string().trim().min(1),
   GITHUB_API_URL: z.url({ protocol: /^https?$/ }),
+
+  UNCONFIRMED_EXPIRATION_TIME: z
+    .string()
+    .trim()
+    .min(1)
+    .refine(
+      (value) => typeof ms(value as ms.StringValue) === 'number',
+      'UNCONFIRMED_EXPIRATION_TIME must be a valid duration (like 10m, 1h, 2d)',
+    ),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
