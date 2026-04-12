@@ -10,8 +10,11 @@ import {
   TokenParams,
   tokenParamsSchema,
 } from './schemas/subscription.schema';
-import { ValidatedRequest } from '../common/types/validated-request';
-import type { ParamsDictionary } from 'express-serve-static-core';
+import {
+  RequestWithValidatedBody,
+  RequestWithValidatedParams,
+  RequestWithValidatedQuery,
+} from '../common/types/validated-request';
 
 export function createSubscriptionRouter(
   subscriptionController: SubscriptionControllerInterface,
@@ -22,7 +25,7 @@ export function createSubscriptionRouter(
     `/${SUBSCRIPTION_ROUTE_PATHS.SUBSCRIBE}`,
     validateRequest({ body: subscribeBodySchema }),
     async (req, res) => {
-      await subscriptionController.subscribe(req as ValidatedRequest<SubscribeBody>, res);
+      await subscriptionController.subscribe(req as RequestWithValidatedBody<SubscribeBody>, res);
     },
   );
 
@@ -30,7 +33,7 @@ export function createSubscriptionRouter(
     `/${SUBSCRIPTION_ROUTE_PATHS.CONFIRM}/:${SUBSCRIPTION_ROUTE_PATHS.TOKEN}`,
     validateRequest({ params: tokenParamsSchema }),
     async (req, res) => {
-      await subscriptionController.confirm(req as ValidatedRequest<unknown, TokenParams>, res);
+      await subscriptionController.confirm(req as RequestWithValidatedParams<TokenParams>, res);
     },
   );
 
@@ -38,7 +41,7 @@ export function createSubscriptionRouter(
     `/${SUBSCRIPTION_ROUTE_PATHS.UNSUBSCRIBE}/:${SUBSCRIPTION_ROUTE_PATHS.TOKEN}`,
     validateRequest({ params: tokenParamsSchema }),
     async (req, res) => {
-      await subscriptionController.unsubscribe(req as ValidatedRequest<unknown, TokenParams>, res);
+      await subscriptionController.unsubscribe(req as RequestWithValidatedParams<TokenParams>, res);
     },
   );
 
@@ -47,7 +50,7 @@ export function createSubscriptionRouter(
     validateRequest({ query: subscriptionsQuerySchema }),
     async (req, res) => {
       await subscriptionController.getSubscriptionsByEmail(
-        req as ValidatedRequest<unknown, ParamsDictionary, SubscriptionsQuery>,
+        req as RequestWithValidatedQuery<SubscriptionsQuery>,
         res,
       );
     },

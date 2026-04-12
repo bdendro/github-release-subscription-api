@@ -6,6 +6,7 @@ import { EmailProviderInterface } from './email/interfaces/email.provider.interf
 import { GithubClient } from './github/github.client';
 import { GithubService } from './github/github.service';
 import { GithubClientInterface } from './github/interfaces/github.client.interface';
+import { GithubRateLimiter } from './github/utils/github-rate-limiter';
 import { SubscriptionController } from './subscriptions/subscription.controller';
 import { SubscriptionRepository } from './subscriptions/subscription.repository';
 import { SubscriptionService } from './subscriptions/subscription.service';
@@ -22,7 +23,8 @@ export function createContainer(env: Env, overrides?: ContainerOverrides) {
   const emailProvider = overrides?.emailProvider || new EmailProvider(env);
   const emailService = new EmailService(emailProvider);
 
-  const githubClient = overrides?.githubClient || new GithubClient(env);
+  const githubRateLimiter = new GithubRateLimiter();
+  const githubClient = overrides?.githubClient || new GithubClient(githubRateLimiter, env);
   const githubService = new GithubService(githubClient);
 
   const subscriptionRepository = new SubscriptionRepository(prisma);
@@ -36,6 +38,7 @@ export function createContainer(env: Env, overrides?: ContainerOverrides) {
   return {
     prisma,
     emailProvider,
+    githubRateLimiter,
     controllers: { subscriptionController },
     services: { subscriptionService, emailService, githubService },
   };
